@@ -55,17 +55,26 @@ body {
     width: 345px;
 }
 
-.weather{
+.weather {
     text-align: center;
     font-size: 20px;
     text-transform: capitalize;
 }
 
-.name{
+.name {
     font-size: 34px;
 }
 
-.weatherMain{
+.weatherMain {
     text-transform: uppercase;
     color: brown;
+}
+
+.videos iframe {
+    width: 33.333333% !important;
+}
+
+.youtube h1 {
+    text-align: center;
+    display: none;
 }

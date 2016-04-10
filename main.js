@@ -102,25 +102,26 @@ function makeWeatherRequest(city) {
 }
 
 
-//function youtube(location) {
-//    request.execute(function (response) {
-//        console.log(response);
-//        //            var str = JSON.stringify(response.result);
-//        //            $('#search-container').html('<pre>' + str + '</pre>');
-//    });
-//}
-
 function makeYoutubeRequest(location) {
     var request = gapi.client.youtube.search.list({
         part: 'snippet',
+        q: $('input#pac-input').val(),
         maxResults: 3,
-        type: 'video',
-        location: location.lat() + ',' + location.lng(),
-        locationRadius: '1km',
+        type: 'video'
     });
+
+    console.log(document.querySelector('.name').innerHTML);
+
     request.then(function (response) {
-        var v1 = response.result.items[0].id.videoId;
-        $('body').append('<iframe width="560" height="315" src="https://www.youtube.com/embed/' + v1 + '" frameborder="0" allowfullscreen></iframe>');
+        var videos = response.result.items;
+
+        $('.videos').html('');
+        $(videos).each(function (index, video) {
+            console.log(video);
+            $('.videos').append('<iframe width="560" height="315" src="https://www.youtube.com/embed/' + video.id.videoId + '" frameborder="0" allowfullscreen></iframe>');
+        });
+        $('.youtube span').html($('input#pac-input').val());
+        $('.youtube h1').fadeIn();
 
     }, function (reason) {
         console.log('Error: ' + reason.result.error.message);
