@@ -63,21 +63,25 @@ function initAutocomplete() {
             } else {
                 bounds.extend(place.geometry.location);
             }
-            weather(place.name);
-            youtube(place.geometry.location);
+            makeWeatherRequest(place.name);
+            makeYoutubeRequest(place.geometry.location);
         });
-        
-        
+
+
         map.fitBounds(bounds);
     });
     // [END region_getplaces]
 
 }
 
-function httpGetAsync(theUrl, callback)
-{
+function onLoadCallback() {
+    gapi.client.setApiKey("AIzaSyCmkV7mh-Q4f7xOlhJsSDCjqNnDBzhyeis");
+    gapi.client.load('youtube', 'v3');
+}
+
+function httpGetAsync(theUrl, callback) {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function () {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
@@ -85,9 +89,9 @@ function httpGetAsync(theUrl, callback)
     xmlHttp.send(null);
 }
 
-function weather(city) {
+function makeWeatherRequest(city) {
     var url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=b2f0443c1e0a7024b0b5f08e8535792c";
-    httpGetAsync(url, function(res){
+    httpGetAsync(url, function (res) {
         var json = JSON.parse(res);
         document.querySelector('.name').innerHTML = json.name;
         document.querySelector('.weatherMain').innerHTML = json.weather[0].main;
@@ -98,6 +102,27 @@ function weather(city) {
 }
 
 
-function youtube(location) {
-    //use lat and lng
+//function youtube(location) {
+//    request.execute(function (response) {
+//        console.log(response);
+//        //            var str = JSON.stringify(response.result);
+//        //            $('#search-container').html('<pre>' + str + '</pre>');
+//    });
+//}
+
+function makeYoutubeRequest(location) {
+    var request = gapi.client.youtube.search.list({
+        part: 'snippet',
+        maxResults: 3,
+        type: 'video',
+        location: location.lat() + ',' + location.lng(),
+        locationRadius: '1km',
+    });
+    request.then(function (response) {
+        var v1 = response.result.items[0].id.videoId;
+        $('body').append('<iframe width="560" height="315" src="https://www.youtube.com/embed/' + v1 + '" frameborder="0" allowfullscreen></iframe>');
+
+    }, function (reason) {
+        console.log('Error: ' + reason.result.error.message);
+    });
 }
